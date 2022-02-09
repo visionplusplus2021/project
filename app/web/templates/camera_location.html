@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+
+{% block head %}
+  {{ super() }}
+  <title>Camera Locations</title>
+
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"
+  integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A=="
+  crossorigin=""/>
+  <!-- Make sure you put this AFTER Leaflet's CSS -->
+  <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"
+  integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA=="
+  crossorigin=""></script>
+
+  <style>
+    .customCursor{
+      cursor: url(camera.png) 12.5 45, pointer;
+    }
+  </style>
+
+{% endblock %}
+
+{% block container %}
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-md-12">
+      <h4>Camera Location</h4>
+      <div id="mapid" style="height: 100vh"></div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block script %}
+{{ super() }}
+<script>
+  database_url = '{{ database_url_param }}';
+  console.log("Here you go! " + database_url);
+</script>
+<script src="{{ url_for('static', filename='/js/template/camera_location.js') }}"></script>
+<script src="{{ url_for('static', filename='/js/template/camera_location_map.js') }}"></script>
+{% endblock %}

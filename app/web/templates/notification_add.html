@@ -1,0 +1,493 @@
+{% extends "base.html" %}
+<head id="{}"/>
+{% block head %}
+  {{ super() }}
+  <title>Add Notfication</title>
+
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"
+  integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A=="
+  crossorigin=""/>
+  <!-- Make sure you put this AFTER Leaflet's CSS -->
+  <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"
+  integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA=="
+  crossorigin=""></script>
+
+  <style>
+    .customCursor{
+      cursor: url(m.png) 12.5 45, pointer;
+    }
+  </style>
+{% endblock %}
+
+{% block container %}
+
+<script type="text/javascript">
+    function EnableDisablAccident(chkaccident)
+    {
+
+                  var txtaccident = document.getElementById("accident");
+                  var selaccident = document.getElementById("accident_opt");
+
+                  // document.write(chkprecipitation);
+
+                  txtaccident.disabled = chkaccident.checked ? false : true;
+                  txtaccident.value  = "";
+                  // selprecipitation.disabled = chkprecipitation.checked ? false : true;
+                  if (!txtaccident.disabled) {
+
+                      // selprecipitation.disabled = false;
+                      txtaccident.focus();
+                      selaccident.style.visibility = "visible"
+                      txtaccident.value  = "1";
+
+                  }
+                  else {
+                    // selprecipitation.disabled = true;
+                    selaccident.style.visibility = "hidden"
+                    selaccident.value  = "";
+                  }
+                  CheckControl()
+
+    }
+
+    function EnableDisableVehicle(chkvehicle)
+    {
+
+
+
+
+            var txtvehicle= document.getElementById("vehicle");
+            var selvehicle = document.getElementById("vehicle_opt");
+            txtvehicle.disabled = chkvehicle.checked ? false : true;
+            txtvehicle.value  = "";
+            // print("========chkhigh_winds.checked==========="+str(chkhigh_winds.checked))
+
+            // selprecipitation.disabled = chkprecipitation.checked ? false : true;
+            if (!txtvehicle.disabled) {
+
+                // selhigh_winds.disabled = false;
+                txtvehicle.focus();
+                selvehicle.style.visibility = "visible"
+                txtvehicle.value  = "20";
+                // tets()
+            }
+            else {
+              // selhigh_winds.disabled = true;
+              selvehicle.style.visibility = "hidden"
+              selvehicle.value  = "";
+            }
+            CheckControl()
+    }
+
+    function EnableDisableDeceleration(chkdeceleration)
+    {
+
+
+
+
+            var txtdeceleration= document.getElementById("deceleration");
+            var seldeceleration = document.getElementById("deceleration_opt");
+            txtdeceleration.disabled = chkdeceleration.checked ? false : true;
+
+            // print("========chkhigh_winds.checked==========="+str(chkhigh_winds.checked))
+            txtdeceleration.value  = "";
+            // selprecipitation.disabled = chkprecipitation.checked ? false : true;
+            if (!txtdeceleration.disabled) {
+
+                // seldeceleration.disabled = false;
+                txtdeceleration.focus();
+                seldeceleration.style.visibility = "visible"
+                txtdeceleration.value  = "0.25";
+
+            }
+            else {
+              // seldeceleration.disabled = true;
+              seldeceleration.style.visibility = "hidden"
+              seldeceleration.value  = "";
+            }
+            CheckControl()
+    }
+
+    function EnableDisableGround_speed_half(chkground_speed_half)
+    {
+
+
+
+
+            var txtground_speed_half= document.getElementById("ground_speed_half");
+            var selground_speed_half = document.getElementById("ground_speed_half_opt");
+            txtground_speed_half.disabled = chkground_speed_half.checked ? false : true;
+            txtground_speed_half.value  = "";
+            // print("========chkhigh_winds.checked==========="+str(chkhigh_winds.checked))
+
+            // selprecipitation.disabled = chkprecipitation.checked ? false : true;
+            if (!txtground_speed_half.disabled) {
+
+                // selground_speed_half.disabled = false;
+                txtground_speed_half.focus();
+                selground_speed_half.style.visibility = "visible"
+                txtground_speed_half.value  = "70";
+                // tets()
+            }
+            else {
+              // selground_speed_half.disabled = true;
+              selground_speed_half.style.visibility = "hidden"
+              selground_speed_half.value  = "";
+            }
+            CheckControl()
+    }
+
+    function EnableDisableGround_speed_500(chkground_speed_500)
+    {
+
+
+
+
+            var txtground_speed_500 = document.getElementById("ground_speed_500");
+            var selground_speed_500 = document.getElementById("ground_speed_500_opt");
+            txtground_speed_500.disabled = chkground_speed_500.checked ? false : true;
+
+            // print("========chkhigh_winds.checked==========="+str(chkhigh_winds.checked))
+
+            // selprecipitation.disabled = chkprecipitation.checked ? false : true;
+            txtground_speed_500.value  = "";
+            if (!txtground_speed_500.disabled) {
+
+                // selground_speed_500.disabled = false;
+                txtground_speed_500.focus();
+                txtground_speed_500.value  = "35";
+                // selground_speed_500.style.visibility = "visible"
+                // tets()
+            }
+
+            // else {
+            //   selground_speed_500.disabled = true;
+            //   selground_speed_500.style.visibility = "hidden"
+            // }
+            CheckControl()
+    }
+
+    function EnableDisableAlert(chkalert)
+    {
+
+
+
+
+            var chknotification= document.getElementById("notification");
+            var txtinterval= document.getElementById("interval");
+
+            if(chkalert.checked == false && chknotification.checked == false)
+            {
+              txtinterval.disabled = true;
+              txtinterval.value = "";
+            }
+            else {
+              txtinterval.disabled = false;
+              txtinterval.focus();
+
+              if(txtinterval.value == "")
+              {
+                txtinterval.value = "15"
+              }
+
+            }
+
+    }
+
+
+    function EnableDisableNotification(chknotification)
+    {
+
+
+
+
+            var chkalert= document.getElementById("alert");
+            var txtinterval= document.getElementById("interval");
+
+            if(chkalert.checked == false && chknotification.checked == false)
+            {
+              txtinterval.disabled = true;
+              txtinterval.value = "";
+            }
+            else {
+              txtinterval.disabled = false;
+              txtinterval.focus();
+              if(txtinterval.value == "")
+              {
+                txtinterval.value = "15"
+              }
+
+            }
+
+    }
+
+    function setHidden(int_check,value,bool_clear)
+    {
+          var seldeceleration;
+          if(int_check == 0)
+          {
+            seldeceleration = document.getElementById("precipitation_opt");
+
+            seldeceleration.style.visibility = value;
+
+
+
+          }
+          else if(int_check == 1)
+          {
+            seldeceleration = document.getElementById("high_winds_opt");
+
+            seldeceleration.style.visibility = value;
+
+
+          }
+          else if(int_check == 2)
+          {
+            seldeceleration = document.getElementById("deceleration_opt");
+
+            seldeceleration.style.visibility = value;
+
+
+          }
+          else if(int_check == 3)
+          {
+            seldeceleration = document.getElementById("ground_speed_half_opt");
+            seldeceleration.style.visibility = value;
+
+
+          }
+
+          if(bool_clear==1)
+          {
+            seldeceleration.value = "";
+          }
+
+
+
+
+
+    }
+
+
+    function CheckControl()
+    {
+      var control = [chkprecipitation,chkhigh_winds,chkdeceleration,chkground_speed_half,chkground_speed_500];
+      // var control = [chkprecipitation,chkhigh_winds,chkdeceleration,chkground_speed_half,chkground_speed_500];
+      // var control_xx = [selprecipitation,selhigh_winds,seldeceleration,selground_speed_half,selground_speed_500];
+
+      var int_count = 0;
+      var i,j;
+      var str_text = "";
+      var control_check = [0,0,0,0,0]
+      var sum = 0;
+      // var result = control.filter(checkSelect);
+
+      for( i=0 ; i < control.length; i++ )
+      {
+        if(control[i].checked)
+        {
+          int_count++;
+          control_check[i] = 1;
+          sum +=1;
+          setHidden(i,"visible",0);
+        }
+        else {
+          setHidden(i,"hidden",0);
+
+        }
+      }
+
+      // Hidden Last
+      str_text+= "   ===> ";
+      for( i=control.length ; i >= 0; i-- )
+      {
+        if(control_check[i] == 1)
+        {
+          setHidden(i,"hidden",1);
+          str_text+= i+". " +control_check[i] + "<br>";
+          break;
+        }
+
+      }
+
+
+
+    }
+
+</script>
+
+
+<div class="col-md-12">
+    <h4>Alert Criteria Records</h4>
+ <form method="POST" class="post-form" action="/notification_addnew/">
+
+  <div class="container">
+ <br>
+
+
+   </div>
+
+
+<!-- ==========================precipitation======================================  -->
+<div class="form-group row">
+  <label class="col-sm-3 col-form-label" >
+
+        <input type="checkbox" name = "chkaccident"  id="chkaccident" onclick="EnableDisablAccident(this)" checked />
+    Accident:</label>
+  <div class="col-sm-2">
+
+       <input type="number" style="text-align: right"  step="any" class="form-control"
+       name="accident" id="accident" required maxlength="20" value="1"/>
+
+
+  </div>
+
+  <div class="col-sm-2" >
+
+    <select   name="accident_opt" id="accident_opt"  >
+      <!-- <option selected="">Operation</option> -->
+      <option value="and">And</option>
+      <option value="or">Or</option>
+    </select>
+
+  </div>
+</div>
+
+
+<!-- ==========================high_winds======================================  -->
+<div class="form-group row">
+  <label class="col-sm-3 col-form-label" >
+
+        <input type="checkbox" name= "chkvehicle" id="chkvehicle" onclick="EnableDisableVehicle(this)" checked />
+
+    Number of Vehicle:</label>
+  <div class="col-sm-2">
+
+         <input type="number" style="text-align: right"  step="any" class="form-control"
+         name="vehicle" id="vehicle" required maxlength="20" value="15"/>
+
+
+  </div>
+  <div class="col-sm-2">
+
+
+          <select  name="vehicle_opt" id="vehicle_opt" >
+            <!-- <option selected="">Operation</option> -->
+            <option value="and">And</option>
+            <option value="or">Or</option>
+          </select>
+
+
+  </div>
+</div>
+
+
+<!-- ==========================deceleration======================================  -->
+<div class="form-group row">
+  <label class="col-sm-3 col-form-label" >
+
+        <input type="checkbox" name="chkdepedestrian" id="chkPedestrian" onclick="EnableDisablePedestrian(this)" checked />
+
+
+    Number of Pedestrian:</label>
+  <div class="col-sm-2">
+
+         <input type="number" style="text-align: right"  step="any" class="form-control"
+         name="pedestrian" id="pedestrian" required maxlength="20" value="0.25"/>
+
+  </div>
+
+  <div class="col-sm-2">
+
+
+
+        <select  name="pedestrian_opt" id="pedestrian_opt">
+          <!-- <option selected="">Operation</option> -->
+          <option value="and">And</option>
+          <option value="or">Or</option>
+        </select>
+
+
+  </div>
+</div>
+
+
+
+
+
+
+  <div class="form-group row">
+    <label class="col-sm-3 col-form-label"></label>
+  <div class="col-sm-8">
+    <label class="col-sm-2 col-form-label">
+
+      <input type="checkbox" name = "notification"  id="notification" onclick="EnableDisableNotification(this)"  checked />
+      Alert
+    </label>
+
+
+    <label class="col-sm-2 col-form-label">
+      <input type="checkbox" name = "alert"  id="alert"  onclick="EnableDisableAlert(this)"  checked />
+      Notification
+    </label>
+
+
+
+  </div>
+
+
+
+
+  </div>
+
+  <!-- Inteval -->
+
+  <div class="form-group row">
+    <label class="col-sm-3 col-form-label" >
+
+
+
+
+
+      Interval Time</label>
+    <div class="col-sm-2">
+
+
+            <input type="number" style="text-align: right"  step="any" class="form-control"
+            name="interval" id="interval" required maxlength="20" value="35"/>
+
+
+
+    </div>
+    <div class="col-sm-3">
+      <label > Minute (s)</label>
+    </div>
+    <div class="col-sm-2">
+      <!-- <select class="col-sm-2  form-control" name="selground_speed_500" id="selground_speed_500" >
+        <option selected="">Operation</option>
+        <option value="0">And</option>
+        <option value="1">Or</option>
+      </select> -->
+    </div>
+  </div>
+
+
+
+  <div class="form-group row">
+  <label class="col-sm-3 col-form-label"></label>
+  <div class="col-sm-4">
+  <button type="submit" class="btn btn-success btn-lg">Add</button>
+  </div>
+   </div>
+
+ </form>
+ </div>
+
+{% endblock %}
+
+
+
+{% block script %}
+{{ super() }}
+
+{% endblock %}
