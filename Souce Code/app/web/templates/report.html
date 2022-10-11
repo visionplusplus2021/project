@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+
+<head id="{}" />
+{% block head %}
+{{ super() }}
+<title>Admin Panel</title>
+
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"
+  integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A=="
+  crossorigin="" />
+<!-- Make sure you put this AFTER Leaflet's CSS -->
+<script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"
+  integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA=="
+  crossorigin=""></script>
+
+<style>
+  .customCursor {
+    cursor: url(m.png) 12.5 45, pointer;
+  }
+</style>
+{% endblock %}
+
+{% block container %}
+
+
+<div class="row">
+  <div class="col-sm-4">
+    <div class="card">
+      <div class="card-body">
+        <h5 class="card-title">Report on Vehicle Counting</h5>
+        <p class="card-text">Generate Report for Vehicle Couting on Road Lanes.</p>
+        <a class="btn btn-primary" href="{{ url_for('vehicle_report') }}" target="_self" rel="noopener noreferrer">Click Here</a>
+      </div>
+    </div>
+  </div>
+  <div class="col-sm-4">
+    <div class="card">
+      <div class="card-body">
+        <h5 class="card-title">Report on Pedestrian Counting</h5>
+        <p class="card-text">Generate Report for Pedestrians Counting on Crosswalks.</p>
+        <a class="btn btn-primary" href="{{ url_for('pedestrian_report') }}" target="_self" rel="noopener noreferrer">Click Here</a>
+      </div>
+    </div>
+  </div>
+  <div class="col-sm-4">
+    <div class="card">
+      <div class="card-body">
+        <h5 class="card-title">Report on Jaywalking Counting</h5>
+        <p class="card-text">Generate Report for Jaywalking Counting.</p>
+        <a class="btn btn-primary" href="{{ url_for('jaywalk_report') }}" target="_self" rel="noopener noreferrer">Click Here</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- <div class="col-sm-4">
+  <div class="card">
+    <div class="card-body">
+      <h5 class="card-title">Report on Trespassing Counting</h5>
+      <p class="card-text">Generate Report for Trespassing Counting.</p>
+      <a class="btn btn-primary" href="{{ url_for('trespassing_report') }}" target="_self" rel="noopener noreferrer">Click Here</a>
+    </div>
+  </div>
+</div>
+</div> -->
+
+
+{% endblock %}
+
+
+
+{% block script %}
+{{ super() }}
+<script>
+  database_url = '{{ database_url_param }}';
+  console.log("Here you go! " + database_url);
+</script>
+<script src="{{ url_for('static', filename='/js/template/report.js') }}"></script>
+{% endblock %}

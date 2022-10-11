@@ -1,0 +1,353 @@
+{% extends "base.html" %}
+
+{% block head %}
+  {{ super() }}
+  <title>Time Series</title>
+{% endblock %}
+
+{% block container %}
+<div class="container-fluid">
+
+  {% include 'filtertime.html' %}
+
+  <div class="row">
+    <div class="col-md-12">
+      <div class="card">
+        <div class="card-body">
+          Vehicle Count: <span id='resultCount'></span>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="row mt-5">
+    <div class="col-md-12">
+      <!-- <h4>Traffic Count</h4> -->
+      <div class="chart-container">
+        <canvas id="myChart1"></canvas>
+      </div>
+    </div>
+  </div>
+  <div class="line"></div>
+  <div class="row mt-5">
+    <div class="col-md-12">
+      <!-- <h4>Cumulative Traffic Count</h4> -->
+      <div class="chart-container">
+        <canvas id="myChart2"></canvas>
+      </div>
+    </div>
+  </div>            
+</div>
+{% endblock %}
+
+{% block script %}
+{{ super() }}
+<!-- chart helper function -->
+<script>
+  function listOfColors(len){
+    listOfColorsArray = [];
+    for (var i = 0; i < len; i++) {
+      listOfColorsArray[i] = randomColor();
+    }
+    // console.log(listOfColorsArray);
+    return listOfColorsArray;
+  }
+  function randomColor(){
+        color='rgb('+Math.round(Math.random()*255)+','+Math.round(Math.random()*255)+','+Math.round(Math.random()*255)+')';
+        return color;
+  }
+
+  function addData(chart, label, data) {
+    chart.data.labels.push(label);
+
+    chart.data.datasets[0].data.push(parseFloat(data['person']));
+    chart.data.datasets[1].data.push(parseFloat(data['bicycle']));
+    chart.data.datasets[2].data.push(parseFloat(data['car']));
+    chart.data.datasets[3].data.push(parseFloat(data['motorbike']));
+    chart.data.datasets[4].data.push(parseFloat(data['bus']));
+    chart.data.datasets[5].data.push(parseFloat(data['truck']));
+
+    chart.update();
+  }
+
+  function addDataCum(chart, label, data) {
+    chart.data.labels.push(label);
+
+    line0 = chart.data.datasets[0].data;
+    line1 = chart.data.datasets[1].data;
+    line2 = chart.data.datasets[2].data;
+    line3 = chart.data.datasets[3].data;
+    line4 = chart.data.datasets[4].data;
+    line5 = chart.data.datasets[5].data;
+
+    line0.push( parseFloat(line0[line0.length-1]) + parseFloat(data['person']));
+    line1.push( parseFloat(line1[line1.length-1]) + parseFloat(data['bicycle']));
+    line2.push( parseFloat(line2[line2.length-1]) + parseFloat(data['car']));
+    line3.push( parseFloat(line3[line3.length-1]) + parseFloat(data['motorbike']));
+    line4.push( parseFloat(line4[line4.length-1]) + parseFloat(data['bus']));
+    line5.push( parseFloat(line5[line5.length-1]) + parseFloat(data['truck']));
+
+    // console.log('cumulative');
+
+    chart.update();
+  }
+
+  function clearChart(chart){
+    chart.data.datasets.forEach(function(dataset, index){
+      dataset.data = [];
+    });
+    chart.data.labels = [];
+    chart.update();
+  }
+
+
+  function clearCumChart(chart){
+    chart.data.datasets.forEach(function(dataset, index){
+      dataset.data = [0];
+    });
+    chart.data.labels = [];
+    chart.update();
+  }
+</script>
+<!-- real time update using socket io -->
+<script>
+  $(document).ready(function () {
+
+    var ctx1 = document.getElementById('myChart1').getContext('2d');
+    var chart1 = new Chart(ctx1, {
+        // The type of chart we want to create
+        type: 'line',
+
+        // The data for our dataset
+        data: {
+            labels: [],
+            datasets: [{
+                label: 'person',
+                fill: false,
+                backgroundColor: randomColor(),
+                // borderColor: 'rgb(255, 99, 132)',
+                data: []
+            },
+            {
+                label: 'bicycle',
+                fill: false,
+                backgroundColor: randomColor(),
+                // borderColor: 'rgb(255, 99, 132)',
+                data: []
+            },
+            {
+                label: 'car',
+                fill: false,
+                backgroundColor: randomColor(),
+                // borderColor: 'rgb(255, 99, 132)',
+                data: []
+            },
+            {
+                label: 'motorbike',
+                fill: false,
+                backgroundColor: randomColor(),
+                // borderColor: 'rgb(255, 99, 132)',
+                data: []
+            },
+            {
+                label: 'bus',
+                fill: false,
+                backgroundColor: randomColor(),
+                // borderColor: 'rgb(255, 99, 132)',
+                data: []
+            },
+            {
+                label: 'truck',
+                fill: false,
+                backgroundColor: randomColor(),
+                // borderColor: 'rgb(255, 99, 132)',
+                data: []
+            }]
+        },
+        // Configuration options go here
+        options: {
+          responsive: true,
+          title: {
+            display: true,
+            text: 'Traffic Count'
+          }
+          // maintainAspectRatio: false
+        }
+    });
+
+
+    var ctx2 = document.getElementById('myChart2').getContext('2d');
+    var chart2 = new Chart(ctx2, {
+        // The type of chart we want to create
+        type: 'line',
+
+        // The data for our dataset
+        data: {
+            labels: [],
+            datasets: [{
+                label: 'person',
+                fill: false,
+                backgroundColor: randomColor(),
+                // borderColor: 'rgb(255, 99, 132)',
+                data: [0]
+            },
+            {
+                label: 'bicycle',
+                fill: false,
+                backgroundColor: randomColor(),
+                // borderColor: 'rgb(255, 99, 132)',
+                data: [0]
+            },
+            {
+                label: 'car',
+                fill: false,
+                backgroundColor: randomColor(),
+                // borderColor: 'rgb(255, 99, 132)',
+                data: [0]
+            },
+            {
+                label: 'motorbike',
+                fill: false,
+                backgroundColor: randomColor(),
+                // borderColor: 'rgb(255, 99, 132)',
+                data: [0]
+            },
+            {
+                label: 'bus',
+                fill: false,
+                backgroundColor: randomColor(),
+                // borderColor: 'rgb(255, 99, 132)',
+                data: [0]
+            },
+            {
+                label: 'truck',
+                fill: false,
+                backgroundColor: randomColor(),
+                // borderColor: 'rgb(255, 99, 132)',
+                data: [0]
+            }]
+        },
+        // Configuration options go here
+        options: {
+          responsive: true,
+          title: {
+            display: true,
+            text: 'Cumulative Traffic Count'
+          }
+          // maintainAspectRatio: false
+        }
+    });
+
+    var resultCount = document.getElementById("resultCount");
+
+    $('#applyTimeFilter').on('click', function () {
+        var startDate = new Date($("#startDateTimeInput").val());
+        var endDate = new Date($("#endDateTimeInput").val());
+        
+        var startTimestamp = startDate.getTime();
+        var endTimestamp = endDate.getTime();
+        showFilteredData(startTimestamp, endTimestamp);
+    });
+    $('#cancelTimeFilter').on('click', function () {
+      findStartDateTime();
+      findEndDateTime();
+      showAllData();
+    });
+
+    async function findStartDateTime() {
+      var docRef = await db.collection('vehicle').orderBy('datetime').limit(1)
+      .get()
+      .then(function(querySnapshot) {
+        resultCount.innerHTML = querySnapshot.size;
+        querySnapshot.forEach(function(doc) {
+              data = doc.data();
+              var date = new Date(data.datetime);
+              var formatted_date = date.getFullYear() + "-" + ("0" + (date.getMonth() + 1)).slice(-2) + "-" + ("0" + date.getDate()).slice(-2) + "T" + ("0" + date.getHours()).slice(-2) + ":" + ("0" + date.getMinutes()).slice(-2) + ":" + ("0" + date.getSeconds()).slice(-2);
+
+              $("#startDateTimeInput").val(formatted_date);
+              console.log("Document data:", formatted_date);
+          });
+      })
+      .then(
+        function(){
+          // console.log('All data showed');
+        }
+      );
+    }
+    async function findEndDateTime() {
+      var docRef = await db.collection('vehicle').orderBy("datetime", "desc").limit(1)
+      .get()
+      .then(function(querySnapshot) {
+        resultCount.innerHTML = querySnapshot.size;
+        querySnapshot.forEach(function(doc) {
+              data = doc.data();
+              var date = new Date(data.datetime);
+              var formatted_date = date.getFullYear() + "-" + ("0" + (date.getMonth() + 1)).slice(-2) + "-" + ("0" + date.getDate()).slice(-2) + "T" + ("0" + date.getHours()).slice(-2) + ":" + ("0" + date.getMinutes()).slice(-2) + ":" + ("0" + date.getSeconds()).slice(-2);
+
+              $("#endDateTimeInput").val(formatted_date);
+              console.log("Document data:", formatted_date);
+          });
+      })
+      .then(
+        function(){
+          // console.log('All data showed');
+        }
+      );
+    }
+    async function showAllData() {
+      clearChart(chart1);
+      clearCumChart(chart2);
+      var docRef = await db.collection('vehicle').orderBy('datetime')
+      .get()
+      .then(function(querySnapshot) {
+        resultCount.innerHTML = querySnapshot.size;
+        querySnapshot.forEach(function(doc) {
+          data = doc.data();
+          var date = new Date(data.datetime);
+
+          var dictionary = {'person':0,'bicycle':0,'car':0,'motorbike':0,'bus':0,'truck':0}
+          var className = data['class'];
+          dictionary[className] = 1;
+
+          addData(chart1, date.toLocaleTimeString(), dictionary);
+          addDataCum(chart2, date.toLocaleTimeString(), dictionary);    
+        });
+      })
+      .then(
+        function(){
+          // console.log('All data showed');
+        }
+      );
+    }
+    async function showFilteredData(startTimestamp, endTimestamp) {
+      clearChart(chart1);
+      clearCumChart(chart2);
+      var docRef = await db.collection('vehicle').orderBy('datetime').where("datetime", ">=", startTimestamp).where("datetime", "<=", endTimestamp)
+      .get()
+      .then(function(querySnapshot) {
+        resultCount.innerHTML = querySnapshot.size;
+        querySnapshot.forEach(function(doc) {
+          data = doc.data();
+          var date = new Date(data.datetime);
+
+          var dictionary = {'person':0,'bicycle':0,'car':0,'motorbike':0,'bus':0,'truck':0}
+          var className = data['class'];
+          dictionary[className] = 1;
+
+          addData(chart1, date.toLocaleTimeString(), dictionary);
+          addDataCum(chart2, date.toLocaleTimeString(), dictionary);    
+        });
+      })
+      .then(
+        function(){
+          // console.log('Filtered data showed');
+        }
+      );
+    }
+
+
+    findStartDateTime();
+    findEndDateTime();
+    showAllData();
+  });
+</script>
+{% endblock %}

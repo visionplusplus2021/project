@@ -1,0 +1,111 @@
+{% extends "base.html" %}
+<head id="{}"/>
+{% block head %}
+  {{ super() }}
+  <title>Notfication List</title>
+
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"
+  integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A=="
+  crossorigin=""/>
+  <!-- Make sure you put this AFTER Leaflet's CSS -->
+  <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"
+  integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA=="
+  crossorigin=""></script>
+
+  <style>
+    .customCursor{
+      cursor: url(m.png) 12.5 45, pointer;
+    }
+  </style>
+{% endblock %}
+
+{% block container %}
+<div class="col-md-12">
+        <h4>Criteria Setting</h4>
+        <span><a href="/notification_addnew" class="btn btn-primary">Add New Record</a></span>
+        <div class="table-responsive">
+
+
+  <table id="bootstrapdatatable" class="table table-striped table-bordered"  width="100%">
+            <thead>
+
+                <th>ID</th>
+                <th>Accident</th>
+                <th>Opt.</th>
+                <th>Number of Vehicle</th>
+                <th>Opt.</th>
+                <th>Number of Pedestrian</th>
+                <th>Email</th>
+                <th>SMS</th>
+                <th>Edit</th>
+                <th>Delete</th>
+             </thead>
+   <tbody>
+   {% for criteria in criterias %}
+    <tr>
+      <td>{{ criteria[0] }}</td>
+    <!--  precipitation_opt -->
+     {% if criteria[1] != 0 %}
+         <td>{{ criteria[1] }}</td>
+       <td>{{ criteria[2]}}</td>
+     {% else %}
+         <td> </td>
+         <td> </td>
+     {% endif %}
+
+      <!--  high_winds -->
+      {% if criteria[3] != 0 %}
+         <td>{{ criteria[3] }}</td>
+         <td>{{ criteria[4] }}</td>
+     {% else %}
+         <td> </td>
+         <td> </td>
+     {% endif %}
+
+     <!--  deceleration -->
+     {% if criteria[5] != 0 %}
+         <td>{{ criteria[5] }}</td>
+
+     {% else %}
+         <td> </td>
+
+     {% endif %}
+
+     {% if criteria.notification == "on" %}
+
+
+         <td style="text-align: center"  > <br>On</td>
+     {% else %}
+         <td style="text-align: center" >  <br> Off  </td>
+
+     {% endif %}
+
+     {% if criteria.alert == "on" %}
+
+        <td style="text-align: center"  > <br>On</td>
+      {% else %}
+        <td style="text-align: center" >  <br> Off  </td>
+
+     {% endif %}
+
+
+     <!-- <td>{{ criteria.notification }}</td> -->
+     <td><a href="/notification_edit/{{ criteria[0] }}" class="btn btn-primary btn-xs" data-title="Edit" >Edit</a></td>
+     <td><a href="/notification_delete/{{ criteria[0] }}" class="btn btn-danger btn-xs" data-title="Delete" >Delete</a></p></td>
+
+    </tr>
+   {% endfor %}
+   </tbody>
+
+  </table>
+        </div>
+    </div>
+
+{% endblock %}
+
+
+
+{% block script %}
+{{ super() }}
+
+{% endblock %}

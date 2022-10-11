@@ -1,0 +1,640 @@
+{% extends "base.html" %}
+
+<head id="{}" />
+{% block head %}
+{{ super() }}
+<title>Camera Dashboard</title>
+
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"
+  integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A=="
+  crossorigin="" />
+<!-- Make sure you put this AFTER Leaflet's CSS -->
+<script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"
+  integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA=="
+  crossorigin=""></script>
+
+<style>
+  .customCursor {
+    cursor: url(m.png) 12.5 45, pointer;
+  }
+</style>
+{% endblock %}
+
+{% block container %}
+
+
+
+<div class="modal fade bd-example-modal-lg" id="ModalAddCamera" tabindex="-1" role="dialog"
+  aria-labelledby="myLargeModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Add a Camera</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form>
+          <div class="form-row">
+            <div class="form-group col-md-4">
+              <label for="exampleFormControlInput1">Camera Name*:</label>
+              <input type="text" class="form-control" id="inputCameraName">
+            </div>
+            <div class="form-group col-md-8">
+              <label for="inputCameraURL">Camera URL*:</label>
+              <select class="form-control" id="inputCameraURL">
+              </select>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group col-md-6">
+              <label for="inputCameraServer">Camera Server*:</label>
+              <select class="form-control" id="inputCameraServer">
+              </select>
+            </div>
+            <div class="form-group col-md-6">
+              <label for="inputCameraGroup">Camera Group*:</label>
+              <select class="form-control" id="inputCameraGroup">
+              </select>
+            </div>
+            <button type="button" class="btn btn-primary" id="saveInfo">Save</button>
+            <p id="statusAdd" style="padding-left: 35px" class="invisible"></p>
+            <br />
+          </div>
+
+
+          <div id="features" class="disabled form-row">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>Feature</th>
+                  <th>Option</th>
+                  <th>Setting</th>
+                </tr>
+              </thead>
+              <tbody id="inputFeature">
+              </tbody>
+            </table>
+          </div>
+        </form>
+        <!-- <div id="mapid" style="height: 400px; width: 750px;"> -->
+        <!-- </div> -->
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <button type="submit" class="btn btn-primary " id="buttonCameraAdd" disabled>Update Camera</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade bd-example-modal-lg" id="ModalUpdateCamera" tabindex="-1" role="dialog"
+  aria-labelledby="myLargeModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Update Camera</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form>
+          <div class="form-row">
+            <input type="hidden" class="form-control" id="updateCameraID">
+            <div class="form-group col-md-4">
+              <label for="updateCameraName">Camera Name:</label>
+              <input type="text" class="form-control" id="updateCameraName">
+            </div>
+            <div class="form-group col-md-8">
+              <label for="updateCameraURL">Camera URL*:</label>
+              <select class="form-control" id="updateCameraURL">
+              </select>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group col-md-6">
+              <label for="updateCameraServer">Camera Server:</label>
+              <select class="form-control" id="updateCameraServer">
+              </select>
+            </div>
+            <div class="form-group col-md-6">
+              <label for="updateCameraGroup">Camera Group:</label>
+              <select class="form-control" id="updateCameraGroup">
+              </select>
+            </div>
+            <!-- <button type="button" class="btn btn-primary" id="saveNewInfo">Save</button> -->
+          </div>
+
+          <!-- List of features -->
+          <div id="updateFeatures" class=" form-row">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>Feature</th>
+                  <th>Option</th>
+                  <th>Setting</th>
+                </tr>
+              </thead>
+              <tbody id="updateFeature">
+              </tbody>
+            </table>
+          </div>
+        </form>
+        <!-- <div id="updateMapId" style="height: 400px; width: 750px;"> -->
+        <!-- </div> -->
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <button type="submit" class="btn btn-primary" id="buttonCameraUpdate">Update Camera</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- Modal for pre-set Boundaries -->
+<div class="modal fade bd-example-modal-xl" id="ModalPresetCounting" tabindex="-1" role="dialog"
+  aria-labelledby="myLargeModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-xl">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel_preset">Vehicle and Pedestrian Counting Pre-set</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+       
+        <form>
+
+
+          <div class="container">
+            <div class="row">
+              <div class="col-6">
+                <div class="row">
+                  <div id="containerRowTest"></div>
+                  
+
+                </div>
+              </div>
+
+              <div class="col-6">
+                <div class="row" style="padding-left:25px;">
+                  <div class="col-12">
+                    <label for="laneName">Lane Name:</label>
+
+                    <input type="text" class="form-control" id="laneName" name="laneName"  >
+
+                    <label for="laneName">Polygon Point:</label>
+                    <input type="text" class="form-control disabled" id="polygon" name="polygon" disabled>
+                    
+                    <input type="hidden" class="form-control" id="featureType" name="featureType" >
+                    
+                    <input type="hidden" class="form-control" id="CameraID" name="CameraID">
+                    <input type="hidden" class="form-control" id="serverIP" name="serverIP">
+                    <input type="hidden" class="form-control" id="featureID" name="featureID">
+                    
+                    
+
+                    <div class="form-check" id="div_vehicle" >
+
+                      {% if lane_type == "vehicle" %}
+                      <input class="form-check-input" type="radio" name="flexType" id="flexPedestrian" value="vehicle"
+                        checked />
+                      {% else %}
+                      {% if lane_type == "" %}
+                      <input class="form-check-input" type="radio" name="flexType" id="flexPedestrian" value="vehicle"
+                        checked />
+                      {% else %}
+                      <input class="form-check-input" type="radio" name="flexType" id="flexPedestrian" value="vehicle"
+                        checked />
+                      {% endif %}
+                      {% endif %}
+                      <label class="form-check-label" for="flexVehicle"> Vehicle Counting </label>
+                    </div>
+
+                    
+                    <div class="form-check" id="div_pedestrian">
+
+                      <input class="form-check-input" type="radio" name="flexType" id="flexPedestrian"
+                        value="pedestrian" />
+                      {% if lane_type == "pedestrian" %}
+                      <input class="form-check-input" type="radio" name="flexType" id="flexPedestrian"
+                        value="pedestrian" checked />
+                      {% endif %}
+                      <label class="form-check-label" for="flexPedestrian"> Pedestrian Counting </label>
+                    </div>
+
+                    <br>
+                    <button type="button" class="btn btn-primary" id="saveVehicleCounting">Save</button>
+                    <!-- <input type="submit" class="btn btn-primary" name="add_button" value="Add"> -->
+                    <button type="button" class="btn btn-secondary" id="clearVehicleCounting">Clear</button>
+                    
+                    <br>
+                    <p id="statusAddCountingVehicle" style="padding-top: 35px" class="invisible"></p>
+
+                  </div>
+                 
+                  <div class="table-responsive">
+                    
+                    <table id="bootstrapdatatable" class="table table-bordered" width="100%">
+
+                      <th>Lane Name</th>
+                      <th>Lane Type</th>
+                      <th>Delete</th>
+
+
+                      <tbody>
+                      <tbody id="showCounting">
+                      </tbody>
+
+                    </table>
+                  </div>
+
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+          </form>
+
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+       
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade bd-example-modal-xl" id="ModalPresetJaywalking" tabindex="-1" role="dialog"
+  aria-labelledby="myLargeModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-xl">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Jaywalking Pre-set</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+       
+        <form>
+
+
+          <div class="container">
+            <div class="row">
+              <div class="col-6">
+                <div class="row">
+                  <div id="containerJaywalkingImg"></div>
+                </div>
+              </div>
+              
+              <div class="col-6">
+                <div class="row" style="padding-left:25px;">
+                  <div class="col-12">
+                    <label for="areaName">Area Name:</label>
+
+                    <input type="text" class="form-control" id="areaName" name="areaName"  >
+
+                    <label for="polygon_jaywalking">Polygon Point:</label>
+                    <input type="text" class="form-control disabled" id="polygon_jaywalking" name="polygon_jaywalking">
+                    
+                    
+
+                    <input type="hidden" class="form-control" id="CameraID_jaywalking" name="CameraID_jaywalking">
+                    <input type="hidden" class="form-control" id="serverIP_jaywalking" name="serverIP_jaywalking">
+                    <input type="hidden" class="form-control" id="featureID_jaywalking" name="featureID_jaywalking" >
+
+                    <br>
+                    <button type="button" class="btn btn-primary" id="saveJaywalking">Save</button>
+                    <!-- <input type="submit" class="btn btn-primary" name="add_button" value="Add"> -->
+                    <button type="button" class="btn btn-secondary" id="clearJaywalking">Clear</button>
+                    <br>
+                    <p id="statusAddJaywalking" style="padding-top: 35px" class="invisible"></p>
+
+                  </div>
+                  
+                  <div class="table-responsive">
+                    
+                    <table id="bootstrapdatatable" class="table table-bordered" width="100%">
+
+                      <th>Area Name</th>
+                      <th>Delete</th>
+
+
+                      <tbody>
+                      <tbody id="showJaywalking">
+                      </tbody>
+
+                    </table>
+                  </div>
+
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+          </form>
+
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+       
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade bd-example-modal-xl" id="ModalPresetTrespassing" tabindex="-1" role="dialog"
+  aria-labelledby="myLargeModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-xl">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Trespassing Pre-set</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+       
+        <form>
+
+
+          <div class="container">
+            <div class="row">
+              <div class="col-6">
+                <div class="row">
+                  <div id="containerTrespassingImg"></div>
+                </div>
+              </div>
+              
+              <div>
+                <div class="row" style="padding-left:25px;">
+                  <div class="column">
+                    <label for="areaName">Area Name:</label>
+
+                    <input type="text" class="form-control" id="areaName_trespassing" name="areaName_trespassing"  >
+
+                    <label for="polygon_trespassing">Polygon Point:</label>
+                    <input type="text" class="form-control disabled" id="polygon_trespassing" name="polygon_trespassing">
+
+                    <input type="hidden" class="form-control" id="CameraID_trespassing" name="CameraID_trespassing">
+                    <input type="hidden" class="form-control" id="serverIP_trespassing" name="serverIP_trespassing">
+
+                    <br>
+                    <button type="button" class="btn btn-primary" id="saveTrespassing">Save</button>
+                    <!-- <input type="submit" class="btn btn-primary" name="add_button" value="Add"> -->
+                    <button type="button" class="btn btn-secondary" id="clearTrespassing">Clear</button>
+                    <br>
+                    <p id="statusAddTrespassing" style="padding-top: 35px" class="invisible"></p>
+
+                  </div>
+                  <div class="table-responsive">
+                    
+                    <table id="bootstrapdatatable" class="table table-bordered" width="100%">
+
+                      <th>Area Name</th>
+                      <th>Delete</th>
+
+
+                      <tbody>
+                      <tbody id="showTrespassing">
+                      </tbody>
+
+                    </table>
+                  </div>
+
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+          </form>
+
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+       
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<div class="modal fade" id="ModalDeleteJaywalking" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+  aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Delete Area</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form>
+          <p>Are you sure you want to delete this area?</p>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <button type="submit" class="btn btn-danger" id="buttonDeleteArea">Delete Area</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+
+
+<div class="modal fade" id="ModalDeleteTrespassing" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+  aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Delete Area</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form>
+          <p>Are you sure you want to delete this area?</p>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <button type="submit" class="btn btn-danger" id="buttonDeleteTrespassing">Delete Area</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+
+<div class="modal fade" id="ModalSuspendCamera" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+  aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="modalLabelSuspend" name = "modalLabelSuspend">Suspend Camera</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form>
+          <p id="messageSuspend" name= "messageSuspend"></p>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <button type="submit" class="btn btn-danger" id="buttonSuspendCamera">Suspend Camera</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<div class="modal fade" id="ModalDeleteCamera" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+  aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Delete Camera</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form>
+          <p>Are you sure you want to delete this camera?</p>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <button type="submit" class="btn btn-danger" id="buttonDeleteCamera">Delete Camera</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="ModalDeleteLane" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+  aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Delete Lane</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form>
+          <p>Are you sure you want to delete this lane?</p>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <button type="submit" class="btn btn-danger" id="buttonDeleteLane">Delete Lane</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<div class="modal fade" id="ModalSetTrespassing" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+  aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Boundary pre-setting</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form>
+          <p id="boundary"></p>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">No</button>
+        <button type="submit" class="btn btn-danger" id="buttonSetTrespassing">Yes</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="ModalSetJaywalking" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+  aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Boundary pre-setting</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form>
+          <p id="boundary"></p>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">No</button>
+        <button type="submit" class="btn btn-danger" id="buttonSetJaywalking">Yes</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+
+
+<div class="container-fluid">
+
+  {% if session['user'][0][2] == 'admin' %}
+  <div class="row">
+    <div class="sigButton">
+      <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#ModalAddCamera"
+        id="buttonModalAddCamera">Add Camera</button><br>
+    </div>
+  </div>
+  {% endif %}
+
+  <div class="row">
+    <div class="col-8" id="containerRow"></div>
+    <div class="col-4" id="accordian">
+      <div class="accordion" id="groupList">
+      </div>
+    </div>
+  </div>
+
+</div>
+{% endblock %}
+
+
+
+{% block script %}
+{{ super() }}
+<script>
+  database_url = '{{ database_url_param }}';
+  user_id = '{{ user_id }}';
+  user_type = '{{user_type}}';
+</script>
+
+<script src="{{ url_for('static', filename='/js/template/index.js') }}"></script>
+<!-- <script src="{{ url_for('static', filename='/js/template/index_map.js') }}"></script> -->
+{% endblock %}

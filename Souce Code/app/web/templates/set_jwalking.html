@@ -1,0 +1,89 @@
+{% extends "base.html" %}
+<head id="{}"/>
+{% block head %}
+  {{ super() }}
+  <title>Set Jaywalking Boundary</title>
+
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"
+  integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A=="
+  crossorigin=""/>
+  <!-- Make sure you put this AFTER Leaflet's CSS -->
+  <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"
+  integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA=="
+  crossorigin=""></script>
+
+  <style>
+    .customCursor{
+      cursor: url(m.png) 12.5 45, pointer;
+    }
+  </style>
+{% endblock %}
+
+{% block container %}
+  <script type="text/javascript">
+ 
+ $(document).ready(function() {
+  
+  
+  $('img').click(function(e) {
+            var offset_t = $(this).offset().top - $(window).scrollTop();
+            var offset_l = $(this).offset().left - $(window).scrollLeft();
+            w =   $(this).prop("width");        // Width  (Rendered)
+            h =  $(this).prop("height");        // Height (Rendered)
+            nw =    $(this).prop("naturalWidth") ;  // Width  (Natural)
+            nh =  $(this).prop("naturalHeight") ; // Height (Natural)
+            var left = Math.round( (e.clientX - offset_l) );
+            var top = Math.round( (e.clientY - offset_t) );
+            x_data = Math.round((left*nw)/w);
+            y_data = Math.round((top*nh)/h);
+          
+            $('#img_coordinate').html("click x: "+x_data+" y: "+y_data);
+
+                
+            $(form).submit();
+          
+         
+        });
+
+       
+
+});
+
+
+          
+       
+              
+ 
+  </script>
+  <div>
+        <form method="POST" class="post-form" action="/set_jwalk_boundary/{{id}}">
+          <input src="data:image/jpeg;base64,{{ img_data }}" alt="Submit button"  id="img" type="image" " />
+            <br>
+            
+            <input type="hidden" id="polygon_id" name="polygon_id" value="{{polygon_id}}">
+            <input type="hidden" id="id" name="id" value="{{id}}">
+
+            {% if dis_polygon== "1" %}
+              <input type="checkbox" id="dis_polygon" name="dis_polygon" value="checked" >
+            {% else %}
+              <input type="checkbox" id="dis_polygon" name="dis_polygon" value="checked" checked>
+            {% endif %}
+            <label for="vehicle1">Display Polygon</label>
+            <input type="submit" name="new_button" value="New">
+            <input type="submit" name="update_button" value="Update">
+            <input type="submit" name="submit_button" value="Clear">
+            
+        </form>
+        <p id="img_coordinate"></p>
+
+      </div>
+
+
+{% endblock %}
+
+
+
+{% block script %}
+{{ super() }}
+
+{% endblock %}

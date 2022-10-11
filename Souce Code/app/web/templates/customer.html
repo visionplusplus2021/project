@@ -1,0 +1,307 @@
+{% extends "base.html" %}
+
+<head id="{}" />
+{% block head %}
+{{ super() }}
+<title>Contact List</title>
+
+
+<style>
+  .customCursor {
+    cursor: url(m.png) 12.5 45, pointer;
+  }
+</style>
+{% endblock %}
+
+{% block container %}
+
+<div class="modal fade bd-example-modal-lg" id="ModalAddCustomer" tabindex="-1" role="dialog"
+  aria-labelledby="myLargeModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Add New Contact</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="col-md-12">
+        <!-- <h4>Django CRUD (Create Read Update Delete) Example - Bootstrap Datatable</h4> -->
+
+        <form>
+
+          <div class="container">
+            <br> <br>
+
+            <div class="form-group row">
+              <label class="col-sm-4 col-form-label" style="text-align: right">Contact Name:</label>
+              <div class="col-sm-4">
+                <input type="text" style="text-align: left" class="form-control" name="username" id="username" required
+                  maxlength="100" />
+              </div>
+            </div>
+            <div class="form-group row">
+              <label class="col-sm-4 col-form-label" style="text-align: right">Contact Email:</label>
+              <div class="col-sm-4">
+                <input type="email" style="text-align: left" class="form-control" name="contact_email"
+                  id="contact_email" required maxlength="100" />
+              </div>
+            </div>
+            <div class="form-group row">
+              <label class="col-sm-4 col-form-label" style="text-align: right">Contact Number:</label>
+              <div class="col-sm-4">
+                <input type="tel" style="text-align: left" class="form-control" name="contact_mobile"
+                  id="contact_mobile" required maxlength="100" />
+              </div>
+            </div>
+            
+            <div class="form-group row">
+              <label class="col-sm-4 col-form-label" style="text-align: right">Notification:</label>
+              <div class="col-sm-6">
+               
+
+                  <input type="radio" name="myRadios" value="imidiate" checked />
+                  <label class="form-check-label" for="flexVehicle">Imidiate</label>
+
+                  <div class="row">
+                    <div class="col-sm-3 col-form-label">
+                      
+                      <input type="radio" name="myRadios"  value="period" />
+                      <label class="form-check-label" for="flexPedestrian"> Every </label>
+                    </div>
+                    <div class="col-sm-3 col-form-label">
+                      <input type="tel" width="10px" style="text-align: left" class="form-control" name="period"
+                      id="period" required maxlength="3" />
+                    </div>
+                    <div class="col-sm-6 col-form-label">
+                      <select class="form-control" id="periodType" name="periodType" visibility="hidden">
+                        <option value="minute">minute(s)</option>
+                        <option value="hour">hour(s)</option>
+                        <option value="day">day(s)</option>
+                        <!-- <option value="counting">counting</option>
+                        <option value="nearmiss">nearmiss</option> -->
+                      </select>
+                    </div>
+                  </div>
+
+
+
+                  
+                 
+
+                 
+                  
+
+                
+              </div>
+            </div>
+
+
+            
+
+
+
+            <br>
+            <div class="table-responsive">
+              <h5 class="modal-title" id="exampleModalLabel">Notification</h5>
+              <table id="bootstrapdatatable_addFeature" class="table table-bordered" width="100%">
+          
+                <th>Feature Name</th>
+                <th>Email</th>
+                <th>SMS</th>
+                <tbody>
+                <tbody id="showAddFeature">
+                </tbody>
+          
+              </table>
+            </div>
+          </div>
+        </form>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <button type="submit" class="btn btn-primary" id="btnAddContact">Add Contact</button>
+      </div>
+      <p id="statusAdd" class="invisible"></p>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade bd-example-modal-lg" id="ModalUpdateCustomer" tabindex="-1" role="dialog"
+  aria-labelledby="myLargeModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Update Contact</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="col-md-12">
+        <!-- <h4>Django CRUD (Create Read Update Delete) Example - Bootstrap Datatable</h4> -->
+
+        <form>
+
+          <div class="container">
+            <br> <br>
+
+            <div class="form-group row">
+              <label class="col-sm-4 col-form-label" style="text-align: right">Contact Name:</label>
+              <div class="col-sm-4">
+                <input type="text" style="text-align: left" class="form-control" name="username" id="updateName" required
+                  maxlength="100" />
+              </div>
+            </div>
+            <div class="form-group row">
+              <label class="col-sm-4 col-form-label" style="text-align: right">Contact Email:</label>
+              <div class="col-sm-4">
+                <input type="email" style="text-align: left" class="form-control" name="updateEmail"
+                  id="updateEmail" required maxlength="100" />
+              </div>
+            </div>
+            <div class="form-group row">
+              <label class="col-sm-4 col-form-label" style="text-align: right">Contact Number:</label>
+              <div class="col-sm-4">
+                <input type="tel" style="text-align: left" class="form-control" name="updateMobile"
+                  id="updateMobile" required maxlength="100" />
+              </div>
+            </div>
+
+           
+          </div>
+          <div class="table-responsive">
+            <h5 class="modal-title" id="exampleModalLabel">Notification</h5>
+            <table id="bootstrapdatatable2" class="table table-bordered" width="100%">
+        
+              <th>Feature Name</th>
+              <th>Email</th>
+              <th>SMS</th>
+              <tbody>
+              <tbody id="showFeature">
+              </tbody>
+        
+            </table>
+          </div>
+          <br>
+        </form>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <button type="submit" class="btn btn-primary" id="btnUpdateCustomer">Update Contact</button>
+      </div>
+      <p id="statusAdd" class="invisible"></p>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="ModalDeleteCustomer" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+  aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Delete Contact</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form>
+          <p>Are you sure you want to delete this contact?</p>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <button type="submit" class="btn btn-danger" id="buttonDeleteCustomer">Delete Contact</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- Update Email -->
+<div class="modal fade" id="ModalActivateEmail" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+  aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Status email</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+        </button>
+      </div>
+      <div class="modal-body">
+        <form>
+          <p>Are you sure you want to change this status email?</p>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <button type="submit" class="btn btn-danger" id="buttonEmailActivate">Update</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<div class="modal fade" id="ModalActivateContact" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+  aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Status Contact</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+        </button>
+      </div>
+      <div class="modal-body">
+        <form>
+          <p>Are you sure you want to change this status Contact?</p>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <button type="submit" class="btn btn-danger" id="buttonContactActivate">Update</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="col-md-12">
+  <a type="button" class="btn btn-primary" href="{{ url_for('admin') }}">Back</a>
+
+  <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#ModalAddCustomer"
+    id="buttonModalAddCustomer">Add New Contact</button>
+  <br><br>
+  <div class="table-responsive">
+    <table id="bootstrapdatatable" class="table table-bordered" width="100%">
+
+      <th>Contact Name</th>
+      <th>Contact Email</th>
+      <th>Contact Number</th>
+      <th>Edit</th>
+      <th>Delete</th>
+      <th>Status</th>
+     
+
+      <tbody>
+      <tbody id="showContact">
+      </tbody>
+
+    </table>
+  </div>
+</div>
+
+
+{% endblock %}
+
+
+
+{% block script %}
+{{ super() }}
+<script>
+  database_url = '{{ database_url_param }}';
+  user_id = '{{ user_id }}';
+</script>
+<script src="{{ url_for('static', filename='/js/template/customer.js') }}"></script>
+
+{% endblock %}

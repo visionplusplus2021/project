@@ -1,0 +1,115 @@
+{% extends "base.html" %}
+
+{% block head %}
+{{ super() }}
+<title>Reports</title>
+{% endblock %}
+
+{% block container %}
+<div class="container-fluid" id="container-fluid-id">
+    <div class="row">
+        <div  class="form-group col-md-6" >
+          
+            <div class="column">
+                <div class="row">
+                  
+                    <div class="form-group col-md-6">
+                        <label for="startDateTimeInput">Start Date Time</label>
+                        <input class="form-control" type="datetime-local" value="" id="startDateTimeInput">
+                    </div>
+                    <div class="form-group col-md-6">
+                        <label for="endDateTimeInput">End Date Time</label>
+                        <input class="form-control" type="datetime-local" value="" id="endDateTimeInput">
+                    </div>
+                </div>
+                <div class="row" >
+                    
+                    <div class="form-group col-md-6">
+                        <label for="inputServer">Camera Name:</label>
+                        <select class="form-control" id="inputServer">
+                        </select>
+                    </div>
+            
+                    <div class="form-group col-md-6">
+                        <label for="inputLane">Lane Name:</label>
+                        <select class="form-control" id="inputLane" >
+                        </select>
+                        
+                         
+                    </div>    
+                    
+                       
+                   
+                </div>
+
+               
+               
+              </div>
+             
+        </div>
+        <div class="form-group col-md-6" style="position:relative;margin-top:120px;">
+         
+            <button type="submit" class="btn btn-outline-success" id="applyFilter">Search</button>
+            <button type="submit" class="btn btn-outline-success" id="GenerateReport">Generate Report</button>
+            <!-- <button type="submit" class="btn btn-outline-success" id="generateReport">Export</button> -->
+        </div>
+
+        
+       
+      </div>
+
+    
+      <!-- <div >
+        <div class="form-check form-check-inline">
+            <input class="form-check-input" type="checkbox" id="inlineCheckbox1" value="option1">
+            <label class="form-check-label" for="inlineCheckbox1">1</label>
+          </div>
+          <div class="form-check form-check-inline">
+            <input class="form-check-input" type="checkbox" id="inlineCheckbox2" value="option2">
+            <label class="form-check-label" for="inlineCheckbox2">2</label>
+          </div>
+          <div class="form-check form-check-inline">
+            <input class="form-check-input" type="checkbox" id="inlineCheckbox3" value="option3" disabled>
+            <label class="form-check-label" for="inlineCheckbox3">3 (disabled)</label>
+          </div>
+    </div> -->
+    <label id="lblRecord"></label>
+
+
+    
+        
+    
+
+    <div class="form-row">
+        <div class="col-md-8">
+            <!-- <h4>Traffic Count</h4> -->
+            <div class="chart-container">
+                <canvas id="myChart1"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <!-- <div class="form-row">
+        <div class="form-group col-md-6">
+            <label for="inputFileName">File Name</label>
+            <input type="text" class="form-control" id="inputFileName" placeholder="File Name">
+        </div>
+    </div> -->
+    <!-- <div class="form-row">
+        <div class="form-group col-md-6">
+            <button type="submit" class="btn btn-outline-success" id="generateReport">Generate Report</button>
+        </div>
+    </div> -->
+</div>
+{% endblock %}
+
+
+{% block script %}
+{{ super() }}
+<script>
+    database_url = '{{ database_url_param }}';
+    console.log("Here you go! " + database_url);
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js" integrity="sha512-GsLlZN/3F2ErC5ifS5QtgpiJtWd43JWSuIgh7mbzZ8zBps+dvLusV+eNQATqgA/HdeKFVgA5v3S/cIrLF7QnIg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="{{ url_for('static', filename='/js/template/vehicle_report.js') }}"></script>
+{% endblock %}

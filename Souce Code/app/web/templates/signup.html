@@ -1,0 +1,57 @@
+{% block head %}
+{% include 'head.html' %}
+{% endblock %}
+
+{% block content %}
+
+<link rel= "stylesheet" type= "text/css" href= "/css/authentication.css">
+
+<div class="wrapper fadeInDown">
+    <div id="formContent">
+        <br>
+        <h3 class="title">Sign Up</h3>
+        <!-- Tabs Titles -->
+
+        <!-- Login Form -->
+        <form name="signup_form">
+            <input class="fadeIn second" type="email" name="email" placeholder="email" autofocus="">
+            <input class="fadeIn second" type="text" name="name" placeholder="name" autofocus="">
+            <input class="fadeIn second" type="password" name="password" placeholder="password" autofocus="">
+            <input type="submit" class="fadeIn fifth" value="Sign up">
+        </form>
+
+        <p id="status" class="invisible"></p>
+
+        <!-- Remind Passowrd -->
+        <div id="formFooter">
+            <a class="underlineHover" href="{{ url_for('login') }}">Already have an account?</a>
+        </div>
+    </div>
+</div>
+
+<script>
+    $("form[name=signup_form]").submit(function (e) {
+        var $form = $(this);
+        var $status = $("#status");
+        var data = $form.serialize();
+
+        $.ajax({
+            url: "http://127.0.0.1:8080/user/signup",
+            type: "POST",
+            data: data,
+            dataType: "json",
+            success: function (resp) {
+                window.location.href = "/"
+            },
+            error: function (resp) {
+                $status.css({ "color": "red" });
+                $status.text(resp.responseText).removeClass("invisible");
+
+            }
+        })
+
+        e.preventDefault()
+    });
+
+</script>
+{% endblock %}

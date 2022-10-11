@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <!-- Head  -->
+  {% block head %}
+    {% include 'head.html' %}
+  {% endblock %}
+
+  <body>
+    <div class="wrapper">
+        <!-- Sidebar  -->
+        {% include 'sidebar.html' %}
+        <div id="topBar">
+          <!-- Navbar  -->
+          {% include 'navbar.html' %}
+        </div>
+        <!-- Page Content  -->
+        <div id="content">
+
+            <!-- Container  -->
+            {% block container %}
+            {% endblock %}
+        </div>
+    </div>
+
+    {% block script %}
+
+    <script>
+      $(document).ready(function () {
+        $("#sidebar").mCustomScrollbar({
+            theme: "minimal"
+        });
+        $('#sidebarCollapse').on('click', function () {
+            $('#sidebar, #content, #topBar').toggleClass('active');
+            $('.collapse.in').toggleClass('in');
+            $('a[aria-expanded=true]').attr('aria-expanded', 'false');
+        });
+      });
+    </script>
+    {% endblock %}
+
+  </body>
+</html>
