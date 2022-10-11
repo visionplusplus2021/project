@@ -1,0 +1,12 @@
+tensorflow-gpu
+opencv-python
+lxml
+tqdm
+absl-py
+matplotlib
+easydict
+pillow
+scipy
+Flask
+flask-socketio
+pymongo[srv]
